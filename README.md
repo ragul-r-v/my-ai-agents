@@ -17,9 +17,17 @@ ai-agent-monorepo/
 │   ├── app/                   # Agent logic and schemas
 │   ├── tests/                 # Unit & integration tests
 │   └── pyproject.toml         # Dependencies & dev setup
-└── weather-assistant/         # Tool-enabled weather bot
-    ├── app/                   # Agent logic, tools & APIs
-    ├── tests/                 # Unit & integration tests
+├── weather-assistant/         # Tool-enabled weather bot
+│   ├── app/                   # Agent logic, tools & APIs
+│   ├── tests/                 # Unit & integration tests
+│   └── pyproject.toml         # Dependencies & dev setup
+├── ambient-expense-agent/     # Event-driven expense review agent
+│   ├── expense_agent/         # Agent logic and workflow
+│   ├── tests/                 # Unit, integration, & eval tests
+│   └── pyproject.toml         # Dependencies & dev setup
+└── shopping-assistant/        # Conversational retail assistant
+    ├── app/                   # Agent logic, tools, and fast_api_app
+    ├── tests/                 # Unit, integration, & eval tests
     └── pyproject.toml         # Dependencies & dev setup
 ```
 
@@ -53,6 +61,40 @@ graph TD
     WeatherAgent --> Advice[Generate Response & Clothing Advice]
     Advice --> End([Response])
 ```
+
+### 3. 💸 Ambient Expense Agent
+* **Purpose:** Automates expense reviews by routing low-value reports (under $100) straight to approval, and vetting high-value reports for PII (SSN, credit cards) and prompt injections before calling the LLM reviewer or triggering manager approval.
+* **Architecture:**
+```mermaid
+graph TD
+    Start([Pub/Sub Event]) --> Parse[Parse Expense Email]
+    Parse --> Route{Amount Check}
+    Route -- < $100 --> AutoApprove[Auto-Approve Node]
+    Route -- >= $100 --> Security[Security Checkpoint]
+    Security --> Defend{Filter Check}
+    Defend -- Safe --> Review[LLM Review Agent]
+    Defend -- Injection/PII Flagged --> MgrDirect[Bypass to Manager]
+    Review --> Mgr[Request Manager Approval]
+    MgrDirect --> Mgr
+    Mgr --> Final[Process Decision]
+    AutoApprove --> Final
+    Final --> End([State Resolved])
+```
+
+### 4. 🛍️ Shopping Assistant
+* **Purpose:** Acts as an interactive conversational retail helper that lists available products by category and applies one-time discount codes after validating registered customer IDs.
+* **Architecture:**
+```mermaid
+graph TD
+    Start([User Chat]) --> Agent[Shopping Assistant LLM]
+    Agent --> Tools{Tool Needed?}
+    Tools -- Browse Catalog --> Browse[list_available_products tool]
+    Tools -- Apply Coupon --> Coupon[redeem_discount_code tool]
+    Browse --> Agent
+    Coupon --> Agent
+    Agent --> Response([Generate Response])
+```
+
 
 ---
 
@@ -110,6 +152,40 @@ GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
    agents-cli playground
    ```
 4. Open the link displayed in the terminal (usually `http://127.0.0.1:8080/dev-ui/?app=app`) to chat!
+
+---
+
+#### For the Ambient Expense Agent:
+1. Navigate into the ambient expense agent folder:
+   ```powershell
+   cd ambient-expense-agent
+   ```
+2. Install dependencies:
+   ```powershell
+   agents-cli install
+   ```
+3. Start the local playground (direct Python call to bypass Windows path issue):
+   ```powershell
+   .venv\Scripts\python.exe -c "from google.adk.cli import main; main()" web . --host 127.0.0.1 --port 8080 --reload_agents
+   ```
+4. Open the link displayed in the terminal (`http://127.0.0.1:8080/dev-ui/?app=app`) to interact with the agent!
+
+---
+
+#### For the Shopping Assistant:
+1. Navigate into the shopping assistant folder:
+   ```powershell
+   cd shopping-assistant
+   ```
+2. Install dependencies:
+   ```powershell
+   agents-cli install
+   ```
+3. Start the local playground (direct Python call to bypass Windows path issue):
+   ```powershell
+   .venv\Scripts\python.exe -c "from google.adk.cli import main; main()" web . --host 127.0.0.1 --port 8080 --reload_agents
+   ```
+4. Open the link displayed in the terminal (`http://127.0.0.1:8080/dev-ui/?app=app`) to chat with the assistant!
 
 ---
 

@@ -1,0 +1,18 @@
+# Environments
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Cache and compiler files
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.semgrep/
+
+# Local/OS files
+.DS_Store
+Thumbs.db

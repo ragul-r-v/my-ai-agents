@@ -1,0 +1,41 @@
+repos:
+  - repo: local
+    hooks:
+      # ------------------------------------------------------------------
+      # Standard file hygiene — managed locally by pre-commit
+      # ------------------------------------------------------------------
+      - id: end-of-file-fixer
+        name: Fix end of files
+        entry: end-of-file-fixer
+        language: python
+        additional_dependencies: ["pre-commit-hooks>=4.6.0"]
+        types: [text]
+
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+        entry: trailing-whitespace-fixer
+        language: python
+        additional_dependencies: ["pre-commit-hooks>=4.6.0"]
+        types: [text]
+
+      # ------------------------------------------------------------------
+      # Semgrep security scan — local rules only, no network required
+      #
+      # Uses our custom .semgrep/rules.yaml (relative to repo root).
+      # --error causes the hook to exit non-zero on any finding,
+      # blocking the commit until the secret is removed.
+      #
+      # pass_filenames: false — semgrep receives the repo root as its
+      # target; we do not pipe individual staged filenames because
+      # semgrep resolves includes/excludes from the rules itself.
+      # ------------------------------------------------------------------
+      - id: semgrep-local-rules
+        name: "Semgrep — hardcoded secrets (local rules)"
+        entry: semgrep
+        language: python
+        additional_dependencies: ["semgrep==1.79.0"]
+        args:
+          - --config=.semgrep/rules.yaml
+          - --error
+        types: [python]
+        pass_filenames: false
