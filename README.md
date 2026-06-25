@@ -2,9 +2,9 @@
 
 ![AI Agents Monorepo Banner](assets/monorepo_banner.png)
 
-Welcome to the **Multi-Agent AI Monorepo**! This repository hosts two advanced agentic applications built with the **Google Agent Development Kit (ADK)** and powered by the latest **Gemini 2.5 Flash** models. 
+Welcome to the **Multi-Agent AI Monorepo**! This repository hosts four advanced agentic applications built with the **Google Agent Development Kit (ADK)** and powered by the latest **Gemini 2.5 Flash** models. 
 
-These agents showcase modular, state-driven workflow architectures designed to perform complex classification, tool-calling, and external API integrations.
+These agents showcase modular, state-driven workflow architectures designed to perform complex classification, tool-calling, security checking, receipt parsing, and external API integrations.
 
 ---
 
@@ -110,7 +110,7 @@ Ensure you have the following installed on your machine:
   ```
 
 ### 🔑 API Key Setup
-Before running either agent, make sure you configure your Gemini API Key. Each project directory contains a `.env` file containing the configuration:
+Before running any of the agents, make sure you configure your Gemini API Key. Each project directory contains a `.env` file containing the configuration:
 ```env
 GOOGLE_GENAI_USE_VERTEXAI=False
 GOOGLE_API_KEY="YOUR_GEMINI_API_KEY"
